@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/OpenGL.iml" filepath="$PROJECT_DIR$/OpenGL.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/lesson168_intro/lesson168_intro.iml" filepath="$PROJECT_DIR$/lesson168_intro/lesson168_intro.iml" />
       <module fileurl="file://$PROJECT_DIR$/lesson169_shaders/lesson169_shaders.iml" filepath="$PROJECT_DIR$/lesson169_shaders/lesson169_shaders.iml" />
+      <module fileurl="file://$PROJECT_DIR$/opengl.iml" filepath="$PROJECT_DIR$/opengl.iml" />
     </modules>
   </component>
 </project>
