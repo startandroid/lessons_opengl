@@ -1,37 +1,24 @@
 package ru.startandroid.l169shaders;
 
 import android.content.Context;
-import android.content.res.Resources.NotFoundException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import static android.opengl.GLES20.GL_VERTEX_SHADER;
-import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
 import static android.opengl.GLES20.GL_COMPILE_STATUS;
 import static android.opengl.GLES20.GL_LINK_STATUS;
-
-import static android.opengl.GLES20.glCreateShader;
-import static android.opengl.GLES20.glShaderSource;
-import static android.opengl.GLES20.glCompileShader;
-import static android.opengl.GLES20.glGetShaderiv;
-import static android.opengl.GLES20.glDeleteShader;
-import static android.opengl.GLES20.glCreateProgram;
 import static android.opengl.GLES20.glAttachShader;
-import static android.opengl.GLES20.glLinkProgram;
-import static android.opengl.GLES20.glGetProgramiv;
+import static android.opengl.GLES20.glCompileShader;
+import static android.opengl.GLES20.glCreateProgram;
+import static android.opengl.GLES20.glCreateShader;
 import static android.opengl.GLES20.glDeleteProgram;
-import static android.opengl.GLES20.glUseProgram;
+import static android.opengl.GLES20.glDeleteShader;
+import static android.opengl.GLES20.glGetProgramiv;
+import static android.opengl.GLES20.glGetShaderiv;
+import static android.opengl.GLES20.glLinkProgram;
+import static android.opengl.GLES20.glShaderSource;
 
 
 public class ShaderUtils {
 
-    public static int createProgram(Context context, int vertexShaderRawId, int fragmentShaderRawId) {
-
-        int vertexShaderId = ShaderUtils.createShader(GL_VERTEX_SHADER, context, vertexShaderRawId);
-        int fragmentShaderId = ShaderUtils.createShader(GL_FRAGMENT_SHADER, context, fragmentShaderRawId);
+    public static int createProgram(int vertexShaderId, int fragmentShaderId) {
 
         final int programId = glCreateProgram();
         if (programId == 0) {
@@ -48,19 +35,17 @@ public class ShaderUtils {
             glDeleteProgram(programId);
             return 0;
         }
-
-        glUseProgram(programId);
         return programId;
 
     }
 
-    private static int createShader(int type, Context context, int shaderRawId) {
+    static int createShader(Context context, int type, int shaderRawId) {
         String shaderText = FileUtils
                 .readTextFromRaw(context, shaderRawId);
         return ShaderUtils.createShader(type, shaderText);
     }
 
-    private static int createShader(int type, String shaderText) {
+    static int createShader(int type, String shaderText) {
         final int shaderId = glCreateShader(type);
         if (shaderId == 0) {
             return 0;

@@ -1,5 +1,4 @@
 package ru.startandroid.l169shaders;
-
 import android.content.Context;
 import android.content.res.Resources;
 

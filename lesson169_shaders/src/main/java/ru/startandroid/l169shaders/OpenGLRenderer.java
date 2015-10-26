@@ -12,7 +12,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_FLOAT;
+import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
 import static android.opengl.GLES20.GL_TRIANGLES;
+import static android.opengl.GLES20.GL_VERTEX_SHADER;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDrawArrays;
@@ -20,19 +22,17 @@ import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glUniform4f;
+import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
 
 public class OpenGLRenderer implements Renderer {
 
-    private static final int POSITION_COMPONENT_COUNT = 2;
-
-    private static final int BYTES_PER_FLOAT = 4;
-    private static final String U_COLOR = "u_Color";
-    private static final String A_POSITION = "a_Position";
-    private FloatBuffer vertexData;
     private Context context;
+
     private int programId;
+
+    private FloatBuffer vertexData;
     private int uColorLocation;
     private int aPositionLocation;
 
@@ -42,10 +42,13 @@ public class OpenGLRenderer implements Renderer {
     }
 
     @Override
-    public void onDrawFrame(GL10 arg0) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+    public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
+        glClearColor(0f, 0f, 0f, 1f);
+        int vertexShaderId = ShaderUtils.createShader(context, GL_VERTEX_SHADER, R.raw.vertex_shader);
+        int fragmentShaderId = ShaderUtils.createShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader);
+        programId = ShaderUtils.createProgram(vertexShaderId, fragmentShaderId);
+        glUseProgram(programId);
+        bindData();
     }
 
     @Override
@@ -53,34 +56,35 @@ public class OpenGLRenderer implements Renderer {
         glViewport(0, 0, width, height);
     }
 
-    @Override
-    public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
-        glClearColor(0f, 0f, 0f, 1f);
-        programId = ShaderUtils.createProgram(context, R.raw.vertex_shader, R.raw.fragment_shader);
-        bindData();
-    }
-
     private void prepareData() {
-        float[] tableVerticesWithTriangles = {
+        float[] vertices = {
                 -0.5f, -0.2f,
                 0.0f, 0.2f,
                 0.5f, -0.2f,
         };
 
         vertexData = ByteBuffer
-                .allocateDirect(tableVerticesWithTriangles.length * BYTES_PER_FLOAT)
+                .allocateDirect(vertices.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        vertexData.put(tableVerticesWithTriangles);
+        vertexData.put(vertices);
     }
 
     private void bindData(){
-        uColorLocation = glGetUniformLocation(programId, U_COLOR);
-        aPositionLocation = glGetAttribLocation(programId, A_POSITION);
+        uColorLocation = glGetUniformLocation(programId, "u_Color");
+        glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+
+        aPositionLocation = glGetAttribLocation(programId, "a_Position");
         vertexData.position(0);
-        glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT,
+        glVertexAttribPointer(aPositionLocation, 2, GL_FLOAT,
                 false, 0, vertexData);
         glEnableVertexAttribArray(aPositionLocation);
+    }
+
+    @Override
+    public void onDrawFrame(GL10 arg0) {
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 
 }
