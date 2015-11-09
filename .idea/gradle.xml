@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/lesson168_intro" />
             <option value="$PROJECT_DIR$/lesson169_shaders" />
+            <option value="$PROJECT_DIR$/lesson170_primitives" />
           </set>
         </option>
       </GradleProjectSettings>

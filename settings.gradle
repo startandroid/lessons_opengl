@@ -1,1 +1,1 @@
-include ':app', ':lesson168_intro', ':lesson169_shaders'
+include ':app', ':lesson168_intro', ':lesson169_shaders', ':lesson170_primitives'
