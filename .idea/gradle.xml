@@ -5,7 +5,7 @@
       <GradleProjectSettings>
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="F:\android\androidStudio\android-studio\gradle\gradle-2.4" />
+        <option name="gradleHome" value="F:\android\androidStudio\android-studio\gradle\gradle-2.8" />
         <option name="gradleJvm" value="1.7" />
         <option name="modules">
           <set>
@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/lesson168_intro" />
             <option value="$PROJECT_DIR$/lesson169_shaders" />
             <option value="$PROJECT_DIR$/lesson170_primitives" />
+            <option value="$PROJECT_DIR$/lesson171_colors" />
           </set>
         </option>
       </GradleProjectSettings>
