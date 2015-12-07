@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/lesson169_shaders" />
             <option value="$PROJECT_DIR$/lesson170_primitives" />
             <option value="$PROJECT_DIR$/lesson171_colors" />
+            <option value="$PROJECT_DIR$/lesson172_perspective" />
           </set>
         </option>
       </GradleProjectSettings>
