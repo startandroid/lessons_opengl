@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/lesson171_colors" />
             <option value="$PROJECT_DIR$/lesson172_perspective" />
             <option value="$PROJECT_DIR$/lesson173_view" />
+            <option value="$PROJECT_DIR$/lesson174_model" />
           </set>
         </option>
         <option name="myModules">
@@ -28,6 +29,7 @@
             <option value="$PROJECT_DIR$/lesson171_colors" />
             <option value="$PROJECT_DIR$/lesson172_perspective" />
             <option value="$PROJECT_DIR$/lesson173_view" />
+            <option value="$PROJECT_DIR$/lesson174_model" />
           </set>
         </option>
       </GradleProjectSettings>
