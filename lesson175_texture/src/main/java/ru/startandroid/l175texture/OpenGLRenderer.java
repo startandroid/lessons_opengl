@@ -1,9 +1,8 @@
-package ru.startandroid.l174model;
+package ru.startandroid.l175texture;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -13,44 +12,53 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
+import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES20.GL_DEPTH_TEST;
 import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
-import static android.opengl.GLES20.GL_LINES;
+import static android.opengl.GLES20.GL_TEXTURE0;
+import static android.opengl.GLES20.GL_TEXTURE_2D;
+import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
 import static android.opengl.GLES20.GL_VERTEX_SHADER;
+import static android.opengl.GLES20.glActiveTexture;
+import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDrawArrays;
+import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
-import static android.opengl.GLES20.glUniform4f;
+import static android.opengl.GLES20.glUniform1i;
+import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.GLES20.glViewport;
-import static android.opengl.GLES20.glUniformMatrix4fv;
-import static android.opengl.GLES20.GL_TRIANGLES;
-import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
-import static android.opengl.GLES20.GL_DEPTH_TEST;
-import static android.opengl.GLES20.glEnable;
-import static android.opengl.GLES20.glLineWidth;
 
 public class OpenGLRenderer implements Renderer {
 
     private final static int POSITION_COUNT = 3;
-    private final static long TIME = 10000L;
+    private static final int TEXTURE_COUNT = 2;
+    private static final int STRIDE = (POSITION_COUNT
+            + TEXTURE_COUNT) * 4;
 
     private Context context;
 
     private FloatBuffer vertexData;
 
-    private int uColorLocation;
+
+    private int aPositionLocation;
+    private int aTextureLocation;
+    private int uTextureUnitLocation;
     private int uMatrixLocation;
+
     private int programId;
 
     private float[] mProjectionMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
-    private float[] mModelMatrix = new float[16];
     private float[] mMatrix = new float[16];
+
+    private int texture;
 
     public OpenGLRenderer(Context context) {
         this.context = context;
@@ -60,13 +68,12 @@ public class OpenGLRenderer implements Renderer {
     public void onSurfaceCreated(GL10 arg0, EGLConfig arg1) {
         glClearColor(0f, 0f, 0f, 1f);
         glEnable(GL_DEPTH_TEST);
-        int vertexShaderId = ShaderUtils.createShader(context, GL_VERTEX_SHADER, R.raw.vertex_shader);
-        int fragmentShaderId = ShaderUtils.createShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader);
-        programId = ShaderUtils.createProgram(vertexShaderId, fragmentShaderId);
-        glUseProgram(programId);
-        createViewMatrix();
+
+        createAndUseProgram();
+        getLocations();
         prepareData();
         bindData();
+        createViewMatrix();
     }
 
     @Override
@@ -79,23 +86,10 @@ public class OpenGLRenderer implements Renderer {
     private void prepareData() {
 
         float[] vertices = {
-
-                // треугольник
-                -1, -0.5f, 0.5f,
-                1, -0.5f, 0.5f,
-                0, 0.5f, 0.5f,
-
-                // ось X
-                -3f, 0, 0,
-                3f, 0, 0,
-
-                // ось Y
-                0, -3f, 0,
-                0, 3f, 0,
-
-                // ось Z
-                0, 0, -3f,
-                0, 0, 3f
+                -1,  1, 1,   0, 0,
+                -1, -1, 1,   0, 1,
+                 1,  1, 1,   1, 0,
+                 1, -1, 1,   1, 1,
         };
 
         vertexData = ByteBuffer
@@ -104,21 +98,42 @@ public class OpenGLRenderer implements Renderer {
                 .asFloatBuffer();
         vertexData.put(vertices);
 
+        texture = TextureUtils.loadTexture(context, R.drawable.box);
+    }
+
+    private void createAndUseProgram() {
+        int vertexShaderId = ShaderUtils.createShader(context, GL_VERTEX_SHADER, R.raw.vertex_shader);
+        int fragmentShaderId = ShaderUtils.createShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader);
+        programId = ShaderUtils.createProgram(vertexShaderId, fragmentShaderId);
+        glUseProgram(programId);
+    }
+
+    private void getLocations() {
+        aPositionLocation = glGetAttribLocation(programId, "a_Position");
+        aTextureLocation = glGetAttribLocation(programId, "a_Texture");
+        uTextureUnitLocation = glGetUniformLocation(programId, "u_TextureUnit");
+        uMatrixLocation = glGetUniformLocation(programId, "u_Matrix");
     }
 
     private void bindData() {
-        // примитивы
-        int aPositionLocation = glGetAttribLocation(programId, "a_Position");
+        // координаты вершин
         vertexData.position(0);
         glVertexAttribPointer(aPositionLocation, POSITION_COUNT, GL_FLOAT,
-                false, 0, vertexData);
+                false, STRIDE, vertexData);
         glEnableVertexAttribArray(aPositionLocation);
 
-        // цвет
-        uColorLocation = glGetUniformLocation(programId, "u_Color");
+        // координаты текстур
+        vertexData.position(POSITION_COUNT);
+        glVertexAttribPointer(aTextureLocation, TEXTURE_COUNT, GL_FLOAT,
+                false, STRIDE, vertexData);
+        glEnableVertexAttribArray(aTextureLocation);
 
-        // матрица
-        uMatrixLocation = glGetUniformLocation(programId, "u_Matrix");
+        // помещаем текстуру в target 2D юнита 0
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        // юнит текстуры
+        glUniform1i(uTextureUnitLocation, 0);
     }
 
     private void createProjectionMatrix(int width, int height) {
@@ -144,9 +159,9 @@ public class OpenGLRenderer implements Renderer {
 
     private void createViewMatrix() {
         // точка положения камеры
-        float eyeX = 2;
-        float eyeY = 2;
-        float eyeZ = 3;
+        float eyeX = 0;
+        float eyeY = 0;
+        float eyeZ = 7;
 
         // точка направления камеры
         float centerX = 0;
@@ -163,49 +178,14 @@ public class OpenGLRenderer implements Renderer {
 
 
     private void bindMatrix() {
-        Matrix.multiplyMM(mMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
-        Matrix.multiplyMM(mMatrix, 0, mProjectionMatrix, 0, mMatrix, 0);
+        Matrix.multiplyMM(mMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
         glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix, 0);
     }
 
     @Override
     public void onDrawFrame(GL10 arg0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // оси
-        drawAxes();
-
-        // треугольник
-        drawTriangle();
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 
-    private void drawAxes() {
-        Matrix.setIdentityM(mModelMatrix, 0);
-        bindMatrix();
-
-        glLineWidth(3);
-        glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
-        glDrawArrays(GL_LINES, 3, 2);
-
-        glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
-        glDrawArrays(GL_LINES, 5, 2);
-
-        glUniform4f(uColorLocation, 1.0f, 1.0f, 0.0f, 1.0f);
-        glDrawArrays(GL_LINES, 7, 2);
-    }
-
-    private void drawTriangle() {
-        Matrix.setIdentityM(mModelMatrix, 0);
-        setModelMatrix();
-        bindMatrix();
-
-        glUniform4f(uColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-    }
-
-
-    private void setModelMatrix() {
-        float angle = (float)(SystemClock.uptimeMillis() % TIME) / TIME * 360;
-        Matrix.rotateM(mModelMatrix, 0, angle, 0, 1, 1);
-    }
 }
