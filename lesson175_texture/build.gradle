@@ -5,7 +5,7 @@ android {
     buildToolsVersion '23.0.2'
 
     defaultConfig {
-        applicationId "ru.startandroid.l174_model"
+        applicationId "ru.startandroid.l175_texture"
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 1
