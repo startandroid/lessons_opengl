@@ -11,6 +11,7 @@
       <module fileurl="file://$PROJECT_DIR$/lesson173_view/lesson173_view.iml" filepath="$PROJECT_DIR$/lesson173_view/lesson173_view.iml" />
       <module fileurl="file://$PROJECT_DIR$/lesson174_model/lesson174_model.iml" filepath="$PROJECT_DIR$/lesson174_model/lesson174_model.iml" />
       <module fileurl="file://$PROJECT_DIR$/lesson175_texture/lesson175_texture.iml" filepath="$PROJECT_DIR$/lesson175_texture/lesson175_texture.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lesson176_texture_cube/lesson176_texture_cube.iml" filepath="$PROJECT_DIR$/lesson176_texture_cube/lesson176_texture_cube.iml" />
       <module fileurl="file://$PROJECT_DIR$/opengl.iml" filepath="$PROJECT_DIR$/opengl.iml" />
     </modules>
   </component>

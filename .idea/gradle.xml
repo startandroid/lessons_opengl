@@ -5,7 +5,6 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="1.7" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -18,6 +17,7 @@
             <option value="$PROJECT_DIR$/lesson173_view" />
             <option value="$PROJECT_DIR$/lesson174_model" />
             <option value="$PROJECT_DIR$/lesson175_texture" />
+            <option value="$PROJECT_DIR$/lesson176_texture_cube" />
           </set>
         </option>
         <option name="myModules">
@@ -32,6 +32,7 @@
             <option value="$PROJECT_DIR$/lesson173_view" />
             <option value="$PROJECT_DIR$/lesson174_model" />
             <option value="$PROJECT_DIR$/lesson175_texture" />
+            <option value="$PROJECT_DIR$/lesson176_texture_cube" />
           </set>
         </option>
       </GradleProjectSettings>
